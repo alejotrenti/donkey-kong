@@ -6,6 +6,12 @@ class GameController {
   public boolean izquierda, derecha, subir, bajar;
   public boolean mirandoIzquierda = false;
 
+  // Puntaje
+  private final int PUNTOS_POR_PISO = 100;    // la primera vez que llega a un piso mas alto
+  private final int PUNTOS_POR_BARRIL = 100;  // cada barril que salta
+  private final int PUNTOS_POR_GANAR = 1000;
+  private final float ALTURA_SALTO_BARRIL = 50; // distancia max. entre los pies y el barril para contar el salto
+
   GameController(PApplet app, float ancho, float alto) {
     this.ancho = ancho;
     this.alto = alto;
@@ -92,13 +98,36 @@ class GameController {
 
     // Colisión con Pauline → victoria
     if (Colisiones.intersecta(m, n.pauline)) {
-      partida.sumarPuntaje(1000);
+      partida.sumarPuntaje(PUNTOS_POR_GANAR);
       cambiarEstado(new VictoryState());
+      return; // la partida termino: no sumar nada mas
     }
 
-    // Puntaje por altura (cada 100 px subidos)
-    int altura = (int)(n.alto - m.getY());
-    partida.sumarPuntaje((altura / 100) - (partida.getPuntaje() % 10 == 0 ? 0 : 0)); // simplificado
+    // Puntaje
+    puntuarAvance(m);
+    puntuarSaltos(m, n);
+  }
+
+  // +PUNTOS_POR_PISO la primera vez que Mario se para en un piso mas alto que todos los anteriores
+  private void puntuarAvance(Mario m) {
+    if (m.isEnSuelo() && partida.registrarAltura(m.getY() + m.getH())) {
+      partida.sumarPuntaje(PUNTOS_POR_PISO);
+    }
+  }
+
+  // +PUNTOS_POR_BARRIL por cada barril que pasa por debajo de Mario mientras esta en el aire
+  private void puntuarSaltos(Mario m, Nivel n) {
+    if (m.isEnSuelo() || m.isEnEscalera()) return;
+    float pies = m.getY() + m.getH();
+    for (Barril b : n.barriles) {
+      if (b.isSaltado()) continue; // cada barril suma una sola vez
+      boolean debajoEnX = b.getX() < m.getX() + m.getW() && b.getX() + b.getW() > m.getX();
+      float distancia = b.getY() - pies; // > 0: el barril esta por debajo de los pies
+      if (debajoEnX && distancia >= 0 && distancia < ALTURA_SALTO_BARRIL) {
+        b.setSaltado(true);
+        partida.sumarPuntaje(PUNTOS_POR_BARRIL);
+      }
+    }
   }
 
   private void resolverPlataformas(Mario m, Nivel n) {

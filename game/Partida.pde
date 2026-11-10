@@ -5,6 +5,7 @@ class Partida {
   private int puntaje;
   private int vidasIniciales = 3;
   private float xInicio, yInicio;
+  private float yPiesRecord; // altura (y de los pies) del piso mas alto alcanzado; menor y = mas arriba
 
   Partida(float ancho, float alto) {
     nivel = new Nivel(ancho, alto);
@@ -13,6 +14,16 @@ class Partida {
     yInicio = mario.getY();
     vidas = vidasIniciales;
     puntaje = 0;
+    yPiesRecord = yInicio + mario.getH();
+  }
+
+  // Devuelve true si yPies es un piso mas alto que cualquiera alcanzado antes (y lo registra)
+  public boolean registrarAltura(float yPies) {
+    if (yPies < yPiesRecord - 1) {
+      yPiesRecord = yPies;
+      return true;
+    }
+    return false;
   }
 
   public Nivel getNivel() { return nivel; }
@@ -40,6 +51,7 @@ class Partida {
   public void reiniciar() {
     vidas = vidasIniciales;
     puntaje = 0;
+    yPiesRecord = yInicio + mario.getH();
     reiniciarPosiciones();
   }
   
