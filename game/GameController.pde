@@ -98,9 +98,15 @@ class GameController {
 
     // Colisión con Pauline → victoria
     if (Colisiones.intersecta(m, n.pauline)) {
-      partida.sumarPuntaje(PUNTOS_POR_GANAR);
+      partida.sumarPuntaje(PUNTOS_POR_GANAR + partida.getBonus()); // se cobra el bonus que quede
       cambiarEstado(new VictoryState());
       return; // la partida termino: no sumar nada mas
+    }
+
+    // Bonus: baja con el tiempo; si llega a 0 se acabo el tiempo y termina la partida
+    if (partida.actualizarBonus(dt)) {
+      cambiarEstado(new GameOverState());
+      return;
     }
 
     // Puntaje
