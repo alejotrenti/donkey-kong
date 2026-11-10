@@ -6,6 +6,7 @@ class Barril implements Colisionable, Movible {
   private float gravedad = 1200f;
   private boolean rodando;
   private boolean cayendo;
+  private boolean saltado; // true cuando Mario ya lo salto (para sumar puntos una sola vez)
 
   Barril(float x, float y, int direccion) {
     this.x = x; this.y = y;
@@ -26,6 +27,8 @@ class Barril implements Colisionable, Movible {
   public boolean isCayendo() { return cayendo; }
   public void setDireccion(int dir) { vx = dir * 180f; }
   public int getDireccion() { return vx > 0 ? 1 : -1; }
+  public boolean isSaltado() { return saltado; }
+  public void setSaltado(boolean s) { saltado = s; }
 
   public float[] getBounds() { return new float[]{x, y, w, h}; }
   public float getX() { return x; }
