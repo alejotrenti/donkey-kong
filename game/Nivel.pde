@@ -4,6 +4,7 @@ class Nivel {
   ArrayList<Barril> barriles = new ArrayList<Barril>();
   DonkeyKong dk;
   Pauline pauline;
+  Plataforma suelo; // la ultima plataforma: los barriles salen del nivel por aca
   float ancho, alto;
   float xInicioMario, yInicioMario;
 
@@ -18,7 +19,8 @@ class Nivel {
     float altoPlat = 20;
 
     // Suelo
-    plataformas.add(new Plataforma(40, alto - 60, ancho - 80, altoPlat));
+    suelo = new Plataforma(40, alto - 60, ancho - 80, altoPlat);
+    plataformas.add(suelo);
     // Plataforma 2 (escalonada)
     plataformas.add(new Plataforma(40, alto - 170, ancho - 200, altoPlat));
     // Plataforma 3
@@ -91,9 +93,12 @@ class Nivel {
       b.update(dt);
     }
 
-    // Rebotar en paredes laterales
-    if (b.getX() < 20) b.setDireccion(1);
+    // Rebotar en paredes laterales. La pared derecha rebota siempre;
+    // la izquierda solo por encima del suelo: en el suelo el barril
+    // vuelve hacia la izquierda, cae por el borde y update() lo elimina
     if (b.getX() + b.getW() > ancho - 20) b.setDireccion(-1);
+    boolean porEncimaDelSuelo = b.getY() + b.getH() < suelo.getY();
+    if (porEncimaDelSuelo && b.getX() < 20) b.setDireccion(1);
   }
 
   public Mario crearMario() {
