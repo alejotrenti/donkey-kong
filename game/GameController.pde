@@ -142,11 +142,18 @@ class GameController {
   }
 
   private void resolverEscaleras(Mario m, Nivel n) {
-    boolean sobreEscalera = false;
+    Escalera actual = null;
     for (Escalera e : n.escaleras) {
-      if (Colisiones.intersecta(m, e)) { sobreEscalera = true; break; }
+      if (Colisiones.intersecta(m, e)) { actual = e; break; }
     }
-    m.setEnEscalera(sobreEscalera);
+    // No dejar que Mario baje mas alla del pie de la escalera (ahi esta el piso)
+    if (actual != null) {
+      float pie = actual.getY() + actual.getH();
+      if (m.getY() + m.getH() > pie) {
+        m.setPos(m.getX(), pie - m.getH());
+      }
+    }
+    m.setEnEscalera(actual != null);
   }
 
   private void limitarMario(Mario m) {
