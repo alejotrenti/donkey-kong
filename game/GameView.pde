@@ -309,7 +309,9 @@ class GameView {
     boolean mirandoIzquierda = c.mirandoIzquierda;
 
 
-    if (m.isEnEscalera()) {
+    if (c.getNombreEstado().equals("GOLPEADO")) {
+      img = marioGolpeado; // le pego un barril: se muestra golpeado mientras dura la pausa
+    } else if (m.isEnEscalera()) {
       if (m.getVy() != 0) {
         int f = (app.frameCount / 8) % 3;
         img = (f == 0) ? marioClimbEspalda1 : (f == 1) ? marioClimbEspalda2 : marioClimbEspalda3;

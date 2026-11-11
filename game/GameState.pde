@@ -56,6 +56,27 @@ class PausedState implements GameState {
   public String getNombre() { return "PAUSADO"; }
 }
 
+// Cuando un barril golpea al jugador: el juego queda congelado unos segundos
+// mostrando el sprite de golpeado, y recien despues se descuenta la vida
+class GolpeadoState implements GameState {
+  private final float DURACION = 3.0f; // segundos de pausa
+  private float tiempo = 0;
+
+  public void onEnter(GameController c) {}
+  public void update(GameController c, float dt) {
+    tiempo += dt;
+    if (tiempo >= DURACION) {
+      boolean gameOver = c.getPartida().perderVida(); // reinicia posiciones y limpia los barriles
+      c.cambiarEstado(gameOver ? new GameOverState() : new PlayingState());
+    }
+  }
+  public void onKeyPressed(GameController c, char k, int kc) {
+    if (k == ESC) c.cambiarEstado(new MenuState());
+  }
+  public void onKeyReleased(GameController c, char k, int kc) {}
+  public String getNombre() { return "GOLPEADO"; }
+}
+
 class VictoryState implements GameState {
   public void onEnter(GameController c) {}
   public void update(GameController c, float dt) {}
