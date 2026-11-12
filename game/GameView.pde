@@ -8,8 +8,11 @@ class GameView {
   PImage marioGolpeado;
   PImage dkIdle, dkLanzar;
   PImage paulineImg;
+  PImage fondo1, fondo2; // estadio: se alternan para dar movimiento (reflectores, banderas)
+  private final int MS_POR_FONDO = 250; // 250 ms cada imagen = 4 cambios por segundo
+  private final int OSCURECER_FONDO = 110; // 0 = fondo original, 255 = negro. Para que resalten personajes y pelotas
 
-  
+
   public void initSprites() {
     marioIdle = loadImage("mario_idle.png");
     marioWalk1 = loadImage("mario_walk_1.png");
@@ -23,6 +26,24 @@ class GameView {
     dkIdle = loadImage("dk_idle.png");
     dkLanzar = loadImage("dk_brazos_arriba_1.png");
     paulineImg = loadImage("pauline.png");
+    fondo1 = loadImage("fondo_1.png");
+    fondo2 = loadImage("fondo_2.png");
+  }
+
+  // Fondo animado: alterna entre las dos imagenes segun el tiempo real (millis),
+  // asi cambia 4 veces por segundo aunque el juego vaya mas lento o mas rapido
+  private void dibujarFondo() {
+    PImage fondo = (app.millis() / MS_POR_FONDO) % 2 == 0 ? fondo1 : fondo2;
+    if (fondo != null) {
+      app.imageMode(CORNER);
+      app.image(fondo, 0, 0, app.width, app.height);
+      // Capa negra semitransparente encima: la hinchada tiene los mismos colores que el juego
+      app.noStroke();
+      app.fill(0, OSCURECER_FONDO);
+      app.rect(0, 0, app.width, app.height);
+    } else {
+      app.background(30, 30, 60); // si no cargan las imagenes, el azul de antes
+    }
   }
   
   public void render(GameController c) {
@@ -100,7 +121,7 @@ class GameView {
   }
 
   private void dibujarJuego(GameController c) {
-    app.background(30, 30, 60);
+    dibujarFondo();
     Partida p = c.getPartida();
     if (p == null) return;
     Nivel n = p.getNivel();
