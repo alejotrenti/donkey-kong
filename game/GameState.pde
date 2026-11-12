@@ -88,7 +88,7 @@ class VictoryState implements GameState {
     if (k == ESC) c.cambiarEstado(new MenuState());
   }
   public void onKeyReleased(GameController c, char k, int kc) {}
-  public String getNombre() { return "VICTORIA"; }
+  public String getNombre() { return "CAMPEON"; }
 }
 
 class GameOverState implements GameState {
@@ -102,5 +102,5 @@ class GameOverState implements GameState {
     if (k == ESC) c.cambiarEstado(new MenuState());
   }
   public void onKeyReleased(GameController c, char k, int kc) {}
-  public String getNombre() { return "GAME OVER"; }
+  public String getNombre() { return "DESCENDIDO"; }
 }

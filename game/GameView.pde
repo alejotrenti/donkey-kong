@@ -6,7 +6,7 @@ class GameView {
   PImage marioIdle, marioWalk1, marioWalk2, marioWalk3, marioJump;
   PImage marioClimbEspalda1, marioClimbEspalda2, marioClimbEspalda3;
   PImage marioGolpeado;
-  PImage dkIdle, dkLanzar;
+  PImage dkIdle, dkLanzar, dkLanzar2, dkAgachado, dkBocaAbierta, dkDer, dkIzq;
   PImage paulineImg;
   PImage fondo1, fondo2; // estadio: se alternan para dar movimiento (reflectores, banderas)
   private final int MS_POR_FONDO = 250; // 250 ms cada imagen = 4 cambios por segundo
@@ -25,6 +25,11 @@ class GameView {
     marioGolpeado = loadImage("mario_golpeado.png");
     dkIdle = loadImage("dk_idle.png");
     dkLanzar = loadImage("dk_brazos_arriba_1.png");
+    dkLanzar2 = loadImage("dk_brazos_arriba_2.png");
+    dkAgachado = loadImage("dk_frente_agachado.png");
+    dkBocaAbierta = loadImage("dk_boca_abierta.png");
+    dkDer = loadImage("dk_der.png");
+    dkIzq = loadImage("dk_izq.png");
     paulineImg = loadImage("pauline.png");
     fondo1 = loadImage("fondo_1.png");
     fondo2 = loadImage("fondo_2.png");
@@ -53,8 +58,8 @@ class GameView {
     } else {
       dibujarJuego(c);
       if (estado.equals("PAUSADO")) dibujarPausa();
-      if (estado.equals("VICTORIA")) dibujarVictoria(c);
-      if (estado.equals("GAME OVER")) dibujarGameOver(c);
+      if (estado.equals("CAMPEON")) dibujarVictoria(c);
+      if (estado.equals("DESCENDIDO")) dibujarGameOver(c);
     }
   }
 
@@ -72,9 +77,9 @@ class GameView {
     app.textAlign(CENTER, CENTER);
     app.textSize(64);
     app.fill(200, 30, 30); // Sombra roja
-    app.text("DONKEY KONG", app.width / 2 + 4, 104); 
+    app.text("CHIQUI LEAGUE", app.width / 2 + 4, 104); 
     app.fill(255, 220, 60); // Texto amarillo
-    app.text("DONKEY KONG", app.width / 2, 100);
+    app.text("CHIQUI LEAGUE", app.width / 2, 100);
 
     // Subtítulo
     app.textSize(20);
@@ -118,6 +123,23 @@ class GameView {
     app.textSize(14);
     app.text("A/D: Mover   |   W/S: Escaleras   |   ESPACIO: Saltar", app.width / 2, 450);
     app.text("P: Pausa   |   G: Guardar   |   ESC: Menú", app.width / 2, 475);
+  }
+
+  private PImage elegirSpriteDk(DonkeyKong dk, boolean marioGolpeado) {
+    PImage img = null;
+    float t = dk.getTimer();
+    if (marioGolpeado) {
+      img = dkBocaAbierta;
+    } else if (t < 0.35f) {
+      img = dk.isMirandoDerecha() ? dkDer : dkIzq;
+    } else if (t < 1.3f) {
+      img = dkIdle;
+    } else if (t < 1.6f) {
+      img = dkAgachado;
+    } else {
+      img = (app.millis() / 150) % 2 == 0 ? dkLanzar : dkLanzar2;
+    }
+    return img != null ? img : dkIdle;
   }
 
   private void dibujarJuego(GameController c) {
@@ -182,15 +204,7 @@ class GameView {
 
     // Donkey Kong
     if (dkIdle != null) {
-      PImage imgDk = dkIdle;
-      
-      // Si el timer de DK está entre 1.9 y 2.2 (justo cuando tira el barril), mostramos la pose
-      // Ajustá el 1.9 dependiendo del intervalo (2.2f) que pusiste en DonkeyKong.pde
-      float t = n.dk.getTimer();
-      if (t > 1.9f && t < 2.2f) {
-        imgDk = dkLanzar;
-      }
-      
+      PImage imgDk = elegirSpriteDk(n.dk, c.getNombreEstado().equals("GOLPEADO"));
       app.imageMode(CORNER);
       app.image(imgDk, n.dk.getX(), n.dk.getY(), n.dk.getW(), n.dk.getH());
     } else {
@@ -262,7 +276,7 @@ class GameView {
     app.fill(255, 220, 60);
     app.textAlign(CENTER, CENTER);
     app.textSize(52);
-    app.text("¡VICTORIA!", app.width / 2, app.height / 2 - 40);
+    app.text("CAMPEONES", app.width / 2, app.height / 2 - 40);
     app.fill(255);
     app.textSize(22);
     app.text("Puntaje final: " + (p != null ? p.getPuntaje() : 0),
@@ -278,7 +292,7 @@ class GameView {
     app.fill(230, 60, 60);
     app.textAlign(CENTER, CENTER);
     app.textSize(52);
-    app.text("GAME OVER", app.width / 2, app.height / 2 - 40);
+    app.text("DESCENDIDO", app.width / 2, app.height / 2 - 40);
     if (p != null && p.getBonus() == 0) {
       app.fill(255, 220, 60);
       app.textSize(22);
