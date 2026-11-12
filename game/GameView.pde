@@ -314,7 +314,7 @@ class GameView {
         int f = (app.frameCount / 8) % 3;
         img = (f == 0) ? marioClimbEspalda1 : (f == 1) ? marioClimbEspalda2 : marioClimbEspalda3;
       } else {
-        img = marioClimbFrente;
+        img = marioClimbEspalda1; // quieto en la escalera: queda de espaldas, agarrado
       }
     } else if (!m.isEnSuelo()) {
       img = marioJump;
