@@ -242,6 +242,11 @@ class GameView {
     app.textSize(16);
     app.text("Vidas: " + p.getVidas(), 20, 15);
     app.text("Puntaje: " + p.getPuntaje(), 150, 15);
+    // Bonus: amarillo, y rojo cuando queda poco tiempo
+    if (p.getBonus() <= 1000) app.fill(255, 80, 80);
+    else app.fill(255, 220, 60);
+    app.text("Bonus: " + p.getBonus(), 330, 15);
+    app.fill(255);
     app.textAlign(RIGHT, CENTER);
     app.text("G: guardar | P: pausa | ESC: menu", app.width - 20, 15);
   }
@@ -281,6 +286,11 @@ class GameView {
     app.textAlign(CENTER, CENTER);
     app.textSize(52);
     app.text("GAME OVER", app.width / 2, app.height / 2 - 40);
+    if (p != null && p.getBonus() == 0) {
+      app.fill(255, 220, 60);
+      app.textSize(22);
+      app.text("¡Se acabó el tiempo!", app.width / 2, app.height / 2 - 95);
+    }
     app.fill(255);
     app.textSize(22);
     app.text("Puntaje final: " + (p != null ? p.getPuntaje() : 0),

@@ -13,6 +13,8 @@ class SaveManager {
       pw.println(p.getPuntaje());
       pw.println(p.getMario().getX());
       pw.println(p.getMario().getY());
+      pw.println(p.getBonus());
+      pw.println(p.getYPiesRecord());
       pw.flush();
       pw.close();
     } catch (Exception e) {
@@ -34,6 +36,11 @@ class SaveManager {
       p.reiniciar();
       p.setVidas(puntaje, vidas);
       p.getMario().setPos(mx, my);
+      // Lineas 5 y 6 (bonus y piso mas alto): opcionales, para poder cargar partidas guardadas con el formato viejo
+      if (lineas.length >= 6) {
+        p.setBonus(Integer.parseInt(lineas[4].trim()));
+        p.setYPiesRecord(Float.parseFloat(lineas[5].trim()));
+      }
     } catch (LoadGameException e) {
       throw e;
     } catch (Exception e) {
