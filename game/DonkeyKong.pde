@@ -22,5 +22,7 @@ class DonkeyKong extends Personaje {
    
   public float getTimer() { return timer; }
 
+  public boolean isMirandoDerecha() { return mirandoDerecha; }
+
   public void reset() { timer = 0; }
 }
