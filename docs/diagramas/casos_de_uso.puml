@@ -1,0 +1,51 @@
+@startuml casos_de_uso
+' P7. Diagrama de Casos de Uso - Donkey Kong argentino (Grupo 10)
+' Renderizar en https://www.plantuml.com/plantuml o con la extension PlantUML de VS Code.
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #E8F0FB
+  BorderColor #1A2A4A
+}
+
+actor "Jugador\n(personaje controlado por el usuario)" as Jugador
+actor "Chiqui\n(CPU / antagonista)" as Chiqui #FDE8EB
+
+rectangle "Sistema: Donkey Kong argentino - Estadio UNO" {
+  usecase "CU01\nIniciar partida" as CU01
+  usecase "CU12\nCargar partida guardada" as CU12
+  usecase "CU08\nPausar y reanudar partida" as CU08
+  usecase "CU11\nGuardar partida" as CU11
+  usecase "CU02\nMover al jugador" as CU02
+  usecase "CU03\nSaltar pelotas" as CU03
+  usecase "CU04\nSubir y bajar escaleras" as CU04
+  usecase "CU05\nChiqui lanza pelotas" as CU05 #FDE8EB
+  usecase "CU06\nDetectar colisiones" as CU06
+  usecase "CU07\nPerder una vida" as CU07
+  usecase "CU09\nAlcanzar la Copa y ganar" as CU09
+  usecase "CU10\nFinalizar por derrota (Game Over)" as CU10
+}
+
+Jugador --> CU01
+Jugador --> CU08
+Jugador --> CU02
+Jugador --> CU03
+Jugador --> CU04
+CU05 <-- Chiqui
+
+CU12 .> CU01 : <<extend>>\n[existe partida guardada]
+CU11 .> CU08 : <<extend>>\n[desde el menu de pausa]
+
+CU02 ..> CU06 : <<include>>
+CU03 ..> CU06 : <<include>>
+CU04 ..> CU06 : <<include>>
+CU05 ..> CU06 : <<include>>
+
+CU07 ..> CU06 : <<extend>>\n[una pelota golpea al jugador]
+CU09 ..> CU06 : <<extend>>\n[el jugador toca la Copa]
+CU10 ..> CU07 : <<extend>>\n[vidas == 0]
+
+legend bottom
+  Equivalencias: Jugador = Mario | Chiqui = Donkey Kong | Pelotas = Barriles | Copa = Pauline (meta)
+endlegend
+@enduml
