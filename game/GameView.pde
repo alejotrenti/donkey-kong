@@ -4,7 +4,7 @@ class GameView {
   
   boolean ultimaDireccionIzquierda = false;
   PImage marioIdle, marioWalk1, marioWalk2, marioWalk3, marioJump;
-  PImage marioClimbFrente, marioClimbEspalda1, marioClimbEspalda2, marioClimbEspalda3;
+  PImage marioClimbEspalda1, marioClimbEspalda2, marioClimbEspalda3;
   PImage marioGolpeado;
   PImage dkIdle, dkLanzar;
   PImage paulineImg;
@@ -16,7 +16,6 @@ class GameView {
     marioWalk2 = loadImage("mario_walk_2.png");
     marioWalk3 = loadImage("mario_walk_3.png");
     marioJump = loadImage("mario_jump.png");
-    marioClimbFrente = loadImage("mario_climb_frente.png");
     marioClimbEspalda1 = loadImage("mario_climb_espalda_1.png");
     marioClimbEspalda2 = loadImage("mario_climb_espalda_2.png");
     marioClimbEspalda3 = loadImage("mario_climb_espalda_3.png");
