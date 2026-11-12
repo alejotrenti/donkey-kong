@@ -194,36 +194,9 @@ class GameView {
       app.text("HELP", n.pauline.getX() + n.pauline.getW() / 2, n.pauline.getY() + n.pauline.getH() / 2);
     }
 
-    // Barriles
+    // Pelotas (en el modelo siguen siendo la clase Barril)
     for (Barril b : n.barriles) {
-      float cx = b.getX() + b.getW() / 2;
-      float cy = b.getY() + b.getH() / 2;
-      float r = b.getW() / 2;
-
-      // 1. Cuerpo del barril (madera)
-      app.fill(160, 100, 50);
-      app.ellipse(cx, cy, b.getW(), b.getH());
-
-      // 2. Aros metálicos (líneas verticales oscuras)
-      app.stroke(90, 50, 20);
-      app.strokeWeight(2);
-      app.line(cx - r/2, cy - r*0.8, cx - r/2, cy + r*0.8);
-      app.line(cx + r/2, cy - r*0.8, cx + r/2, cy + r*0.8);
-      
-      // 3. Línea horizontal central (la "tapa" del barril)
-      app.line(cx - r*0.8, cy, cx + r*0.8, cy);
-      
-      // 4. Animación de giro (rayitas que rotan)
-      app.noStroke();
-      app.fill(120, 70, 30);
-      app.pushMatrix();
-      app.translate(cx, cy);
-      app.rotate(app.frameCount * 0.15f); // Gira constantemente
-      app.rect(-r*0.6, -2, r*1.2, 4); // La línea que gira
-      app.popMatrix();
-
-      // Restaurar estilos
-      app.noStroke(); 
+      dibujarPelota(b);
     }
 
     // Mario
@@ -299,6 +272,48 @@ class GameView {
     app.text("R: reintentar | ESC: menu", app.width / 2, app.height / 2 + 70);
   }
   
+  // Pelota de futbol: circulo blanco con un pentagono negro en el centro
+  // y 5 manchas alrededor, unidas por costuras. Gira segun cuanto avanzo.
+  private void dibujarPelota(Barril b) {
+    float r = b.getW() / 2;
+    app.pushMatrix();
+    app.translate(b.getX() + r, b.getY() + b.getH() / 2);
+    // Rodar sin patinar: el angulo es la distancia recorrida dividida por el radio.
+    // Asi gira para el lado en que va y deja de girar cuando cae.
+    app.rotate(b.getX() / r);
+
+    // Cuerpo
+    app.stroke(0);
+    app.strokeWeight(1);
+    app.fill(255);
+    app.ellipse(0, 0, r * 2, r * 2);
+
+    // Costuras: del centro hacia cada mancha
+    for (int i = 0; i < 5; i++) {
+      float a = -HALF_PI + i * TWO_PI / 5;
+      app.line(0, 0, app.cos(a) * r * 0.75f, app.sin(a) * r * 0.75f);
+    }
+
+    // Pentagono del centro y manchas del borde
+    app.noStroke();
+    app.fill(0);
+    pentagono(0, 0, r * 0.38f, 0);
+    for (int i = 0; i < 5; i++) {
+      float a = -HALF_PI + i * TWO_PI / 5;
+      pentagono(app.cos(a) * r * 0.75f, app.sin(a) * r * 0.75f, r * 0.24f, a + PI);
+    }
+    app.popMatrix();
+  }
+
+  private void pentagono(float x, float y, float radio, float giro) {
+    app.beginShape();
+    for (int i = 0; i < 5; i++) {
+      float a = -HALF_PI + giro + i * TWO_PI / 5;
+      app.vertex(x + app.cos(a) * radio, y + app.sin(a) * radio);
+    }
+    app.endShape(CLOSE);
+  }
+
   private void dibujarMario(GameController c) {
     Mario m = c.getPartida().getMario();
     if (marioIdle == null) return; 
@@ -309,7 +324,9 @@ class GameView {
     boolean mirandoIzquierda = c.mirandoIzquierda;
 
 
-    if (m.isEnEscalera()) {
+    if (c.getNombreEstado().equals("GOLPEADO")) {
+      img = marioGolpeado; // le pego un barril: se muestra golpeado mientras dura la pausa
+    } else if (m.isEnEscalera()) {
       if (m.getVy() != 0) {
         int f = (app.frameCount / 8) % 3;
         img = (f == 0) ? marioClimbEspalda1 : (f == 1) ? marioClimbEspalda2 : marioClimbEspalda3;

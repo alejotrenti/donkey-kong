@@ -87,11 +87,9 @@ class GameController {
     for (int i = n.barriles.size() - 1; i >= 0; i--) {
       Barril b = n.barriles.get(i);
       if (Colisiones.intersecta(m, b)) {
-        boolean gameOver = partida.perderVida(); // esto limpia n.barriles
-        if (gameOver) {
-          cambiarEstado(new GameOverState());
-        }
-        return; // CLAVE: cortar el update entero, la lista ya cambió
+        // Pausa de 3 s mostrando al jugador golpeado; GolpeadoState descuenta la vida al terminar
+        cambiarEstado(new GolpeadoState());
+        return; // cortar el update: el juego queda congelado
       }
     }
     
