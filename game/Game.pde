@@ -22,6 +22,8 @@ void draw() {
 
 void keyPressed() {
   controller.onKeyPressed(key, keyCode);
+  // Evita que Processing cierre la ventana al apretar ESC (ESC vuelve al menu)
+  if (key == ESC) key = 0;
 }
 
 void keyReleased() {
